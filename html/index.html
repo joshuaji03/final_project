@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>geog465_My First Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"/>
+</head>
+<body>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
+  <div id="mapid" style="height: 1100px;"></div>
+  <script>
+    var mymap = L.map('mapid',
+    {
+    center: [36.6050, -95.3344],
+    zoom: 4
+    });
+    var smoothblack = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+    	maxZoom: 20,
+    	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    });
+    mymap.addLayer(smoothblack);
+  </script>
+</body>
+</html>
