@@ -10,3 +10,8 @@ Used libraries
 - carto.js
 - leaflet.js
 - D3.js  
+
+Challenges
+- Finding a topic
+- Collecting & Cleaning Data
+- Projection method
