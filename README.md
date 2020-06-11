@@ -1,4 +1,4 @@
-# fina_project
+# final_project
 This is a final project created for GEOG 458
 
 I have created a map that plots the records of police violences from **2013 to 2019**
