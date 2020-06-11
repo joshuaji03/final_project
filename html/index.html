@@ -1,24 +1,200 @@
 <!DOCTYPE html>
-<html>
-<head>
-<title>geog465_My First Map</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"/>
-</head>
-<body>
-  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
-  <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
-  <div id="mapid" style="height: 1100px;"></div>
-  <script>
-    var mymap = L.map('mapid',
-    {
-    center: [36.6050, -95.3344],
-    zoom: 4
-    });
-    var smoothblack = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    	maxZoom: 20,
-    	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-    });
-    mymap.addLayer(smoothblack);
-  </script>
-</body>
-</html>
+  <html>
+    <head>
+      <title>CARTO VL Example</title>
+      <!-- Load CARTO VL JS -->
+      <script src="https://libs.cartocdn.com/carto-vl/v1.2.4/carto-vl.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js">    </script>
+      <!-- Load Mapbox GL -->
+      <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
+      <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css" rel="stylesheet"/>
+      <!-- Load CARTO VL Styles -->
+      <link href="https://carto.com/developers/carto-vl/examples/maps/style.css" rel="stylesheet"/>
+      <style>
+        #map {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map"></div>
+      <aside class="toolbox">
+      <div class="box">
+        <header>
+            <h1>Animation controls</h1>
+        </header>
+        <section>
+            <p>Progress: <input type="range" id="js-progress-range" min="0" max="1" step="0.01"></p>
+        </section>
+        <section>
+            <p>Current: <span id="js-current-time" class="open-sans"></span></p>
+        </section>
+        <section>
+            <button id="js-play-button">Play</button>
+            <button id="js-pause-button">Pause</button>
+            <input type="range" id="js-duration-range" min="1" max="30" step="1">
+        </section>
+        <header>
+          <h1>Police Violence</h1>
+        </header>
+        <section>
+          <p class="description open-sans">Animate and color features over a date/time field</p>
+          <div id="controls">
+            <ul>
+              <li>
+                <input type="radio" name="style" onclick="setRampAuto()" id="auto" checked>
+                <label for="auto">Ethnicity</label>
+              </li>
+              <li>
+                <input type="radio" name="style" onclick="setRampBuckets()" id="buckets">
+                <label for="buckets">Age</label>
+              </li>
+              <li>
+                <input type="radio" name="style" onclick="setRampTop()" id="top">
+                <label for="top">Gender</label>
+              </li>
+            </ul>
+          </div>
+          <ul id="content" class="description open-sans">
+            <li>
+              <span class="point-mark" style="background-color:#7F3C8D;"></span>
+              <span>Age 0 to 22</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#11A579;"></span>
+              <span>Age 22 to 44</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#3969AC;"></span>
+              <span>Age 44 to 66</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#4b4b8f;"></span>
+              <span>Age 66+</span>
+            </li>
+          </ul>
+            </section>
+        <footer class="js-footer"></footer>
+      </div>
+    </aside>
+    <div id="loader">
+      <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
+        <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
+          <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
+        </svg>
+      </div>
+    </div>
+    </body>
+    <script>
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: carto.basemaps.darkmatter,
+        center: [-100, 40],
+        zoom: 3
+      })
+
+      const nav = new mapboxgl.NavigationControl({
+        showCompass: false
+      });
+      map.addControl(nav, 'top-left');
+      map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
+
+      carto.setDefaultAuth({
+        username: 'joshuaji',
+        apiKey: 'b1361c2b1154ac185340900d4a8c6044aee23ceb'
+      })
+      const source = new carto.source.Dataset('policedata1');
+
+      //change data point colors
+      const s = carto.expressions;
+      const viz = new carto.Viz(`
+        @duration: 30
+        @animation: animation($incident_date, @duration, fade(0, 1))
+        filter: @animation
+        width: 6
+        //symbol: image('./marker.svg')
+        strokeWidth: 0
+        color: ramp(globalEqIntervals($victim_s_age,4), [#7F3C8D,#11A579,#3969AC,#4b4b8f])
+
+      `);
+
+      const layer = new carto.Layer('layer', source, viz);
+      layer.addTo(map);
+
+      const $progressRange = document.getElementById('js-progress-range');
+      const $playButton = document.getElementById('js-play-button');
+      const $pauseButton = document.getElementById('js-pause-button');
+      const $durationRange = document.getElementById('js-duration-range');
+      const $currentTime = document.getElementById('js-current-time');
+
+      $playButton.addEventListener('click', () => {
+        viz.variables.animation.play();
+      });
+
+      $pauseButton.addEventListener('click', () => {
+          viz.variables.animation.pause();
+      });
+
+      $durationRange.addEventListener('change', () => {
+          viz.variables.duration = parseInt($durationRange.value, 10);
+      });
+
+      // Update progress bar each 100 milliseconds
+      function updateProgress () {
+          $progressRange.value = viz.variables.animation.getProgressPct();
+          $currentTime.innerText = viz.variables.animation.getProgressValue();
+      }
+
+      setInterval(updateProgress, 100);
+
+      layer.addTo(map);
+
+
+      function hideLoader() {
+        document.getElementById('loader').style.opacity = '0';
+      }
+/*
+      // Define styles
+      const rampAutoViz = new carto.Viz(`
+        color: ramp($city, vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+      const rampBucketsViz = new carto.Viz(`
+        color: ramp(buckets($category, ['Moda y calzado','Salud','Alimentación']), vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+      const rampTopViz = new carto.Viz(`
+        color: ramp(top($city, 5), vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+
+      const source = new carto.source.Dataset('policedata1');
+      const layer = new carto.Layer('layer', source, rampAutoViz);
+
+      layer.addTo(map, 'watername_ocean');
+      layer.on('loaded', hideLoader);
+
+      function setRampAuto() {
+        layer.blendToViz(rampAutoViz);
+      }
+      function setRampBuckets() {
+        layer.blendToViz(rampBucketsViz);
+      }
+      function setRampTop() {
+        layer.blendToViz(rampTopViz);
+      }
+      function hideLoader() {
+        document.getElementById('loader').style.opacity = '0';
+      }
+
+*/
+    </script>
+  </html>
