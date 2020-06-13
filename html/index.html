@@ -32,7 +32,7 @@
             <p>Current: <span id="js-current-time" class="open-sans"></span></p>
         </section>
         <section>
-            <button id="js-play-button">Play</button>
+            <button onclick="viz.variables.animation.play()" id="js-play-button">Play</button>
             <button id="js-pause-button">Pause</button>
             <input type="range" id="js-duration-range" min="1" max="30" step="1">
         </section>
@@ -44,19 +44,22 @@
           <div id="controls">
             <ul>
               <li>
-                <input type="radio" name="style" onclick="setRampAuto()" id="auto" checked>
-                <label for="auto">Ethnicity</label>
+                <input type="radio" name="style" onclick="setAgeAuto()" id="auto" checked>
+                <label for="auto">Age</label>
               </li>
               <li>
-                <input type="radio" name="style" onclick="setRampBuckets()" id="buckets">
-                <label for="buckets">Age</label>
+                <input type="radio" name="style" onclick="setRaceAuto()" id="buckets">
+                <label for="buckets">Race</label>
               </li>
               <li>
-                <input type="radio" name="style" onclick="setRampTop()" id="top">
+                <input type="radio" name="style" onclick="setGender();
+                document.getElementById("genderTxt");" id="top">
                 <label for="top">Gender</label>
               </li>
             </ul>
           </div>
+
+          //Age text
           <ul id="content" class="description open-sans">
             <li>
               <span class="point-mark" style="background-color:#7F3C8D;"></span>
@@ -64,17 +67,34 @@
             </li>
             <li>
               <span class="point-mark" style="background-color:#11A579;"></span>
-              <span>Age 22 to 44</span>
+              <span>Age 23 to 44</span>
             </li>
             <li>
               <span class="point-mark" style="background-color:#3969AC;"></span>
-              <span>Age 44 to 66</span>
+              <span>Age 45 to 66</span>
             </li>
             <li>
               <span class="point-mark" style="background-color:#4b4b8f;"></span>
               <span>Age 66+</span>
             </li>
           </ul>
+
+          //Gender text
+          <ul id="genderTxt" class="description open-sans">
+            <li>
+              <span class="point-mark" style="background-color:#E58606;"></span>
+              <span>Male</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#5D69B1;"></span>
+              <span>Female</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#52BCA3;"></span>
+              <span>Other</span>
+            </li>
+          </ul>
+
             </section>
         <footer class="js-footer"></footer>
       </div>
@@ -101,6 +121,12 @@
       map.addControl(nav, 'top-left');
       map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
 
+      //define popup
+      const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
       carto.setDefaultAuth({
         username: 'joshuaji',
         apiKey: 'b1361c2b1154ac185340900d4a8c6044aee23ceb'
@@ -123,6 +149,40 @@
       const layer = new carto.Layer('layer', source, viz);
       layer.addTo(map);
 
+      //plot points
+      const age = new carto.Viz(`
+        color: ramp($victim_s_age, vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+
+      const gender = new carto.Viz(`
+        color: ramp($victim_s_gender, vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+
+      const race = new carto.Viz(`
+        color: ramp($victim_s_race, vivid)
+        width: 5
+        strokeColor: black
+        strokeWidth: 0.5
+      `);
+
+      function setAgeAuto() {
+         layer.blendToViz(age);
+       }
+
+       function setRaceAuto() {
+          layer.blendToViz(race);
+        }
+        function setGender() {
+          layer.blendToViz(gender);
+        }
+
+      //play bar
       const $progressRange = document.getElementById('js-progress-range');
       const $playButton = document.getElementById('js-play-button');
       const $pauseButton = document.getElementById('js-pause-button');
@@ -150,51 +210,17 @@
       setInterval(updateProgress, 100);
 
       layer.addTo(map);
-
-
-      function hideLoader() {
-        document.getElementById('loader').style.opacity = '0';
-      }
-/*
-      // Define styles
-      const rampAutoViz = new carto.Viz(`
-        color: ramp($city, vivid)
-        width: 5
-        strokeColor: black
-        strokeWidth: 0.5
-      `);
-      const rampBucketsViz = new carto.Viz(`
-        color: ramp(buckets($category, ['Moda y calzado','Salud','Alimentación']), vivid)
-        width: 5
-        strokeColor: black
-        strokeWidth: 0.5
-      `);
-      const rampTopViz = new carto.Viz(`
-        color: ramp(top($city, 5), vivid)
-        width: 5
-        strokeColor: black
-        strokeWidth: 0.5
-      `);
-
-      const source = new carto.source.Dataset('policedata1');
-      const layer = new carto.Layer('layer', source, rampAutoViz);
-
-      layer.addTo(map, 'watername_ocean');
       layer.on('loaded', hideLoader);
 
-      function setRampAuto() {
-        layer.blendToViz(rampAutoViz);
+      function somefunction() {
+        $playButton.addEventListener('click', () => {
+          viz.variables.animation.play();
+        });
       }
-      function setRampBuckets() {
-        layer.blendToViz(rampBucketsViz);
-      }
-      function setRampTop() {
-        layer.blendToViz(rampTopViz);
-      }
+
       function hideLoader() {
         document.getElementById('loader').style.opacity = '0';
       }
 
-*/
     </script>
   </html>
