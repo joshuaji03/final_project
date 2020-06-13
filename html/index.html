@@ -2,6 +2,8 @@
   <html>
     <head>
       <title>CARTO VL Example</title>
+      <!-- Load jquery -->
+      <script src="jquery-3.5.1.min.js"></script>
       <!-- Load CARTO VL JS -->
       <script src="https://libs.cartocdn.com/carto-vl/v1.2.4/carto-vl.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js">    </script>
@@ -32,7 +34,7 @@
             <p>Current: <span id="js-current-time" class="open-sans"></span></p>
         </section>
         <section>
-            <button onclick="viz.variables.animation.play()" id="js-play-button">Play</button>
+            <button id="js-play-button">Play</button>
             <button id="js-pause-button">Pause</button>
             <input type="range" id="js-duration-range" min="1" max="30" step="1">
         </section>
@@ -52,34 +54,32 @@
                 <label for="buckets">Race</label>
               </li>
               <li>
-                <input type="radio" name="style" onclick="setGender();
-                document.getElementById("genderTxt");" id="top">
+                <input type="radio" name="style" onclick="setGender();" id="top">
                 <label for="top">Gender</label>
               </li>
             </ul>
           </div>
 
-          //Age text
           <ul id="content" class="description open-sans">
             <li>
-              <span class="point-mark" style="background-color:#7F3C8D;"></span>
-              <span>Age 0 to 22</span>
+              <span class="point-mark" style="background-color:#5F4690;"></span>
+              <span>Age 0 to 20</span>
             </li>
             <li>
-              <span class="point-mark" style="background-color:#11A579;"></span>
-              <span>Age 23 to 44</span>
+              <span class="point-mark" style="background-color:#1D6996;"></span>
+              <span>Age 21 to 44</span>
             </li>
             <li>
-              <span class="point-mark" style="background-color:#3969AC;"></span>
+              <span class="point-mark" style="background-color:#38A6A5;"></span>
               <span>Age 45 to 66</span>
             </li>
             <li>
-              <span class="point-mark" style="background-color:#4b4b8f;"></span>
+              <span class="point-mark" style="background-color:#0F8554;"></span>
               <span>Age 66+</span>
             </li>
           </ul>
 
-          //Gender text
+
           <ul id="genderTxt" class="description open-sans">
             <li>
               <span class="point-mark" style="background-color:#E58606;"></span>
@@ -111,8 +111,8 @@
       const map = new mapboxgl.Map({
         container: 'map',
         style: carto.basemaps.darkmatter,
-        center: [-100, 40],
-        zoom: 3
+        center: [-90, 40],
+        zoom: 2
       })
 
       const nav = new mapboxgl.NavigationControl({
@@ -140,7 +140,6 @@
         @animation: animation($incident_date, @duration, fade(0, 1))
         filter: @animation
         width: 6
-        //symbol: image('./marker.svg')
         strokeWidth: 0
         color: ramp(globalEqIntervals($victim_s_age,4), [#7F3C8D,#11A579,#3969AC,#4b4b8f])
 
@@ -151,7 +150,7 @@
 
       //plot points
       const age = new carto.Viz(`
-        color: ramp($victim_s_age, vivid)
+        color: ramp(globalEqIntervals($victim_s_age, 4), bold)
         width: 5
         strokeColor: black
         strokeWidth: 0.5
@@ -212,11 +211,6 @@
       layer.addTo(map);
       layer.on('loaded', hideLoader);
 
-      function somefunction() {
-        $playButton.addEventListener('click', () => {
-          viz.variables.animation.play();
-        });
-      }
 
       function hideLoader() {
         document.getElementById('loader').style.opacity = '0';
