@@ -46,16 +46,16 @@
           <div id="controls">
             <ul>
               <li>
-                <input type="radio" name="style" onclick="setAgeAuto()" id="auto" checked>
-                <label for="auto">Age</label>
+                <input type="radio" name="style" onclick="setAgeAuto()" id="agetxt" checked>
+                <label for="agetxt">Age</label>
               </li>
               <li>
-                <input type="radio" name="style" onclick="setRaceAuto()" id="buckets">
-                <label for="buckets">Race</label>
+                <input type="radio" name="style" onclick="setRaceAuto()" id="racetxt">
+                <label for="racetxt">Race</label>
               </li>
               <li>
-                <input type="radio" name="style" onclick="setGender();" id="top">
-                <label for="top">Gender</label>
+                <input type="radio" name="style" onclick="setGender();" id="gendertxt">
+                <label for="gendertxt">Gender</label>
               </li>
             </ul>
           </div>
@@ -201,10 +201,12 @@
 
        function setRaceAuto() {
           layer.blendToViz(race);
-        }
+      }
         function setGender() {
           layer.blendToViz(gender);
         }
+
+
 
       //play bar
       const $progressRange = document.getElementById('js-progress-range');
