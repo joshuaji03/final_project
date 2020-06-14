@@ -79,6 +79,32 @@
             </li>
           </ul>
 
+          <ul id="ethnicTxt" class="description open-sans">
+            <li>
+              <span class="point-mark" style="background-color:#5F4690;"></span>
+              <span>African American</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#1D6996;"></span>
+              <span>White</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#38A6A5;"></span>
+              <span>Asian</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#0F8554;"></span>
+              <span>Native Americans</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#73AF48;"></span>
+              <span>Latino</span>
+            </li>
+            <li>
+              <span class="point-mark" style="background-color:#EDAD08;"></span>
+              <span>Other</span>
+            </li>
+          </ul>
 
           <ul id="genderTxt" class="description open-sans">
             <li>
@@ -94,7 +120,6 @@
               <span>Other</span>
             </li>
           </ul>
-
             </section>
         <footer class="js-footer"></footer>
       </div>
@@ -164,7 +189,7 @@
       `);
 
       const race = new carto.Viz(`
-        color: ramp($victim_s_race, vivid)
+        color: ramp($victim_s_race, prism)
         width: 5
         strokeColor: black
         strokeWidth: 0.5
