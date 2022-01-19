@@ -1,4 +1,4 @@
-# [Link](https://joshuaji03.github.io/final_project/index.html)
+# [Reported Police Violence from 2013-2019 in the United States](https://joshuaji03.github.io/final_project/index.html)
 This is a final project created for GEOG 458
 
 I have created a map that plots the records of police violences from **2013 to 2019**
